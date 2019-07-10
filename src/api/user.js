@@ -10,8 +10,8 @@ import request from '@/utils/request'
 // 登录注册
 export const login = ({ mobile, code }) => {
   return request({
-    method: '/app/v1_0/authorizations',
-    url: 'POST',
+    method: 'POST',
+    url: '/app/v1_0/authorizations',
     data: {
       mobile,
       code
