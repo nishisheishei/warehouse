@@ -7,7 +7,8 @@ import axios from 'axios'
  * 例如：有些项目可能会涉及到使用不同的接口路径
  */
 const request = axios.create({
-  baseURL: 'http://toutiao.course.itcast.cn'
+  baseURL: 'http://ttapi.research.itcast.cn/' // 线上地址
+  // baseURL: 'http://toutiao.course.itcast.cn'  // 本地地址
 })
 
 // Add a request interceptor
