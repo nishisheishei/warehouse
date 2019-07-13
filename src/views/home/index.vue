@@ -79,12 +79,6 @@ export default {
     }
   },
 
-  computed: {
-    activeChannel () {
-      return this.channels[this.activeChannelIndex]
-    }
-  },
-
   async created () {
     await this.loadChannels()
 
@@ -93,6 +87,33 @@ export default {
        * 注意：务必在记载频道之后
        */
     // this.loadArticles()
+  },
+
+  computed: {
+    activeChannel () {
+      return this.channels[this.activeChannelIndex]
+    }
+  },
+
+  watch: {
+    /**
+     * 监视容器中的 user 的状态，只要 user发生改变，那么久重新获取频道列表
+     * 注意： 凡是能 this. 点出来的东西都可以被监视
+     */
+    async '$store.state.user' () {
+      // 重新加载频道数据
+      await this.loadChannels()
+
+      // 由于重新加载了频道数据，所以文章内容也都被清空了
+      // 而且上拉加载更多的 onLoad 没有主动触发
+
+      // 我们在这里可以手动的触发上拉加载更多的 onLoad
+      // 提示：只需要将当前激活频道的上拉 loading 设置为 true，它会自动调用自己的 onLoad 函数
+      // 注意：这里肯定有别的东西影响了，没有自动调用 onLoad
+      this.activeChannel.upLoading = true
+      // 自己调用一下
+      this.onLoad()
+    }
   },
 
   methods: {
@@ -137,42 +158,79 @@ export default {
     },
 
     // 获取用户频道列表
-    // async loadChannels () {}
     async loadChannels () {
-      try {
-        let channels = []
-        const localChannels = window.localStorage.getItem('channels')
+      let channels = []
+      // 1,得到频道数据
+      const { user } = this.$store.state
 
-        // 如果有本地存储的频道列表，则使用本地的
+      // 如果已登录，则请求用户频道列表
+      if (user) {
+        channels = (await getUserChannels()).channels
+      } else {
+        // 如果没有登录
+        // 判断是否有本地存储的频道列表
+        const localChannels = JSON.parse(window.localStorage.getItem('channels'))
+        // 如果有，则使用
         if (localChannels) {
-          // this.channels = localChannels
           channels = localChannels
         } else {
-          // this.channels = (await getUserChannels()).channels
+          // 如果没有则请求获取推荐的默认频道列表
           channels = (await getUserChannels()).channels
         }
-
-        // 对频道中的数据统一处理以供页面使用
-        channels.forEach(item => {
-          // 频道的文章
-          item.articles = []
-          // 用于下页频道数据的时间戳
-          item.timestamp = Date.now()
-          // 控制该频道上拉加载是否已加载完毕
-          this.finished = false
-          // 控制该频道的下拉刷新 loading
-          item.upLoading = false
-          // 控制频道列表的下拉刷新状态
-          item.pullRefreshLoading = false
-          // 控制频道列表的下拉刷新成功提示文字
-          item.pullSuccessText = ''
-        })
-
-        this.channels = channels
-      } catch (err) {
-        console.log(err)
       }
+      // 2. 扩展频道数据满足其他业务需求
+      channels.forEach(item => {
+        // 频道的文章
+        item.articles = []
+        // 用于下页频道数据的时间戳
+        item.timestamp = Date.now()
+        // 控制该频道上拉加载是否已加载完毕
+        this.finished = false
+        // 控制该频道的下拉刷新 loading
+        item.upLoading = false
+        // 控制频道列表的下拉刷新状态
+        item.pullRefreshLoading = false
+        // 控制频道列表的下拉刷新成功提示文字
+        item.pullSuccessText = ''
+      })
+
+      this.channels = channels
     },
+    // async loadChannels () {
+    //   try {
+    //     let channels = []
+    //     const localChannels = window.localStorage.getItem('channels')
+
+    //     // 如果有本地存储的频道列表，则使用本地的
+    //     if (localChannels) {
+    //       // this.channels = localChannels
+    //       channels = localChannels
+    //     } else {
+    //       // this.channels = (await getUserChannels()).channels
+    //       channels = (await getUserChannels()).channels
+    //     }
+
+    //     // 对频道中的数据统一处理以供页面使用
+    //     channels.forEach(item => {
+    //       // 频道的文章
+    //       item.articles = []
+    //       // 用于下页频道数据的时间戳
+    //       item.timestamp = Date.now()
+    //       // 控制该频道上拉加载是否已加载完毕
+    //       this.finished = false
+    //       // 控制该频道的下拉刷新 loading
+    //       item.upLoading = false
+    //       // 控制频道列表的下拉刷新状态
+    //       item.pullRefreshLoading = false
+    //       // 控制频道列表的下拉刷新成功提示文字
+    //       item.pullSuccessText = ''
+    //     })
+
+    //     this.channels = channels
+    //   } catch (err) {
+    //     console.log(err)
+    //   }
+    // },
 
     async loadArticles () {
       const { id: channelId, timestamp } = this.activeChannel
