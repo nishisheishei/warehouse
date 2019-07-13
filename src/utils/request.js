@@ -1,4 +1,5 @@
 import axios from 'axios'
+import store from '@/store'
 
 /**
  * axios.create 用于创建一个 axios 实例，该文件实例和 axios 的功能一样的，也可以说是克隆了
@@ -14,6 +15,13 @@ const request = axios.create({
 // Add a request interceptor
 request.interceptors.request.use(function (config) {
   // Do something before request is sent
+
+  // 判断是否登录 如果登录了，则统一给接口添加用户 token
+  const { user } = store.state
+  if (user) {
+    config.headers.Authorization = `Beare ${user.token}`
+  }
+
   return config
 }, function (error) {
   // Do something with request error
