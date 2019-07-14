@@ -44,7 +44,7 @@
             <!-- 字体下面的高亮 -->
             <span
                 class="text"
-                :class="{ active : index === activeIndex && !isEdit }"
+                :class="{ active: index === activeIndex && !isEdit }"
             >{{ item.name }}</span>
             <!-- 删除按钮 字体图标 -->
             <van-icon class="close-icon" v-show="isEdit" name="close" />
@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { getAllChannels } from '@/api/channel'
+import { getAllChannels, deleteUserChannel } from '@/api/channel'
 
 export default {
   name: 'HomeChannel',
@@ -180,14 +180,29 @@ export default {
       }
     },
 
-    handleUserChannelClick (item, index) {
+    async handleUserChannelClick (item, index) {
       // 如果是非编辑状态，则是切换 tab 显示
       if (!this.isEdit) {
         this.$emit('update:active-index', index)
         this.$emit('input', false)
-      } else {
-        // 如果是编辑状态，则是删除操作
+        return
       }
+      // 如果是编辑状态，则是删除操作
+      const channels = this.userChannels.slice(0)
+      channels.splice(index, 1)
+      this.$emit('update:user-channels', channels)
+
+      const { user } = this.$store.state
+
+      //  判断 如果用户已登录，则请求删除
+      if (user) {
+        console.log(item.id)
+        await deleteUserChannel(item.id)
+        return
+      }
+
+      //   如果没有登录，则将数据保存到本地存储
+      window.localStorage.setItem('channels', JSON.stringify(channels))
     }
   }
 }
