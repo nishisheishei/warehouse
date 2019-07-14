@@ -73,6 +73,7 @@
       <home-channel
         v-model="isChannelShow"
         :user-channels='channels'
+        :active-index="activeChannelIndex"
       />
       <!-- /频道组件 -->
     </div>
