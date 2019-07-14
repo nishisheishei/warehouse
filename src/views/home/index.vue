@@ -11,6 +11,10 @@
 
       <!-- 频道标签 -->
       <van-tabs class="channel-tabs" v-model="activeChannelIndex">
+        <!-- 频道标签上的字体图标 -->
+        <div slot="nav-right" class="nav-right" @click="isChannelShow = true">
+          <van-icon name="wap-nav" />
+        </div>
         <van-tab
           v-for="channelItem in channels"
           :key="channelItem.id"
@@ -58,15 +62,23 @@
         <van-tabbar-item icon="setting-o" to="/qaq">我的</van-tabbar-item>
       </van-tabbar>
       <!-- /底部导航 -->
+
+      <!-- 频道组件 -->
+      <home-channel v-model="isChannelShow" />
+      <!-- /频道组件 -->
     </div>
 </template>
 
 <script>
 import { getUserChannels } from '@/api/channel'
 import { getArticles } from '@/api/article'
+import HomeChannel from './components/channel'
 
 export default {
   name: 'HomeIndex',
+  components: {
+    HomeChannel
+  },
   data () {
     return {
       activeChannelIndex: 0,
@@ -75,7 +87,8 @@ export default {
       // finished: false,
       // pullRefreshLoading: false,
       // 获取用户频道列表
-      channels: []
+      channels: [],
+      isChannelShow: false // 控制频道面板的显示状态
     }
   },
 
@@ -279,5 +292,12 @@ export default {
 
 .channel-tabs /deep/ .van-tabs__content {
   margin-top: 92px;
+}
+.channel-tabs .nav-right {
+  position: sticky;
+  right: 0px;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
 }
 </style>
