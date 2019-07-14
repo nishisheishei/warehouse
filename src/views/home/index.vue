@@ -64,7 +64,16 @@
       <!-- /底部导航 -->
 
       <!-- 频道组件 -->
-      <home-channel v-model="isChannelShow" />
+      <!--
+        :value='isChannelShow'
+        @input='isChannelShow = $event'
+
+        :user-channels='channels' 父传子
+       -->
+      <home-channel
+        v-model="isChannelShow"
+        :user-channels='channels'
+      />
       <!-- /频道组件 -->
     </div>
 </template>
