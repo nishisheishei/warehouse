@@ -69,10 +69,14 @@
         @input='isChannelShow = $event'
 
         :user-channels='channels' 父传子
+
+        @update-user-channels="channels.push($event)"
+        .async 修饰符会自动监听一个事件：
+        v-on:update:user-channels="channels = $event"的简写
        -->
       <home-channel
         v-model="isChannelShow"
-        :user-channels='channels'
+        :user-channels.sync='channels'
         :active-index="activeChannelIndex"
       />
       <!-- /频道组件 -->
