@@ -75,6 +75,8 @@
 </template>
 
 <script>
+import { getAllChannels } from '@/api/channel'
+
 export default {
   name: 'HomeChannel',
   // 接收数据
@@ -94,12 +96,24 @@ export default {
   },
   data () {
     return {
-
+      allChannels: []
     }
   },
 
-  methods: {
+  created () {
+    this.loadAllChannels()
+  },
 
+  methods: {
+    async loadAllChannels () {
+      try {
+        const data = await getAllChannels()
+        // console.log(data)
+        this.allChannels = data.channels
+      } catch (err) {
+        console.log('获取全部数据失败')
+      }
+    }
   }
 }
 </script>
