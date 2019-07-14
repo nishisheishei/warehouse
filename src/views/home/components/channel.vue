@@ -126,6 +126,23 @@ export default {
       try {
         const data = await getAllChannels()
         // console.log(data)
+
+        // 将获取到的频道数据统一处理成我们需要的数据格式
+        data.channels.forEach(item => {
+        // 频道的文章
+          item.articles = []
+          // 用于下页频道数据的时间戳
+          item.timestamp = Date.now()
+          // 控制该频道上拉加载是否已加载完毕
+          this.finished = false
+          // 控制该频道的下拉刷新 loading
+          item.upLoading = false
+          // 控制频道列表的下拉刷新状态
+          item.pullRefreshLoading = false
+          // 控制频道列表的下拉刷新成功提示文字
+          item.pullSuccessText = ''
+        })
+
         this.allChannels = data.channels
       } catch (err) {
         console.log('获取全部数据失败')
