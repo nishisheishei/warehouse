@@ -61,11 +61,11 @@
         </div>
         <van-grid class="channel-content" :gutter="10" clickable>
             <van-grid-item
-            v-for="value in 8"
-            :key="value"
-            text="文字">
+            v-for="item in recommendChannels"
+            :key="item.id"
+            >
             <div class="info">
-                <span class="text">文字</span>
+                <span class="text">{{ item.name }}</span>
             </div>
             </van-grid-item>
         </van-grid>
@@ -85,6 +85,7 @@ export default {
       type: Boolean,
       default: false
     },
+    // 父传子 传下来的数据
     userChannels: {
       type: Array,
       default: () => []
@@ -97,6 +98,19 @@ export default {
   data () {
     return {
       allChannels: []
+    }
+  },
+
+  computed: {
+    /**
+     * 该计算属性用于处理获取推荐数据 （也就是不包含频道列表的其他所有频道列表）
+     */
+    // 筛选出已有的数据
+    recommendChannels () {
+      // 拿到所有重复的数据 id
+      const duplicates = this.userChannels.map(item => item.id)
+      // filter 是过滤的作用   includes（包含的意思） 是 ES6中新加的语法： 用于判断是否有  有的话返回 true 没有返回 false
+      return this.allChannels.filter(item => !duplicates.includes(item.id))
     }
   },
 
