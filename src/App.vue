@@ -8,6 +8,12 @@
        <router-view/>
      </keep-alive>
   </div>
+  <!--
+  注意：
+  github 上
+  频道管理 - 不要在子组件中修改道具数组 和
+  频道管理 - 处理获取其它频道数据的数据格式问题 提交反了
+   -->
 </template>
 
 <script>
