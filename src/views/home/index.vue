@@ -46,7 +46,7 @@
             <!-- 列表内容 -->
               <van-cell
                 v-for="item in channelItem.articles"
-                :key="item.art_id"
+                :key="item.art_id.toString()"
                 :title="item.title"
               >
                 <div slot="label">
@@ -130,7 +130,7 @@
       >
         <van-cell-group v-if="!toggleRubbish">
           <van-cell icon="arrow-left" @click="isMoreActionShow = false" />
-          <van-cell title="不感兴趣" icon="location-o" @click="handleDislick()" />
+          <van-cell title="不感兴趣" icon="location-o" @click="handleDislick" />
           <van-cell title="反馈垃圾内容" icon="close" is-link @click="toggleRubbish = true" />
           <van-cell title="拉黑作者" icon="delete" />
         </van-cell-group>
@@ -152,8 +152,9 @@
 
 <script>
 import { getUserChannels } from '@/api/channel'
-import { getArticles } from '@/api/article'
+import { getArticles, dislikesArticle } from '@/api/article'
 import HomeChannel from './components/channel'
+// import { addBlacklists } from '@/api/user'
 
 export default {
   name: 'HomeIndex',
@@ -373,8 +374,38 @@ export default {
     // 弹框中的不感兴趣
     async handleDislick () {
       // 拿到操作的文章 id
+      const articleId = this.currentArticle.art_id.toString()
+
       // 请求完成操作
+      await dislikesArticle(articleId)
+
+      // 隐藏对话框
+      this.isMoreActionShow = false
+
+      // 当前频道文章列表
+      const articles = this.activeChannel.articles
+
+      // // 找到不喜欢的文章位于文章中的索引
+      // // findIndex 是一个数组方法，它会遍历数组，找到满足 item.id === articleId 条件的数据 id
+      const delIndex = articles.findIndex(item => item.art_id.toString() === articleId)
+      // 获取到的id
+      // console.log(delIndex)
+      // // 把本条数据移除
+      articles.splice(delIndex, 1)
+
+      this.$toast('已移除')
     }
+
+    // 拉黑
+    // async handleAddBlacklist () {
+    //    await addBlacklists(this.currentArticle.aut_id)
+
+    //    // 隐藏对话框
+    //    this.isMoreActionShow = false
+
+    //    this.$toast('已拉黑作者');
+
+    // }
   }
 }
 
