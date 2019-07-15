@@ -43,11 +43,26 @@
               finished-text="没有更多了"
               @load="onLoad"
             >
+            <!-- 列表内容 -->
               <van-cell
                 v-for="item in channelItem.articles"
                 :key="item.art_id"
                 :title="item.title"
-              />
+              >
+              <p slot="label">
+                <span>{{ item.aut_name }}</span>
+                &nbsp;
+                <span>{{ item.comm_count }}评论</span>
+                &nbsp;
+                <!-- <span>{{ relativeTime(item.pubdate) }}</span> -->
+                <!--
+                  管道符：  |  relativeTime 就走早调用过滤器函数
+                  过滤器函数接收的参数就是 |  前面的 item.pubdate
+                  过滤器函数返回值会输出到这里
+                 -->
+                <span>{{ item.pubdate | relativeTime }}</span>
+              </p>
+              </van-cell>
             </van-list>
           </van-pull-refresh>
         </van-tab>
@@ -74,6 +89,13 @@
         .sync 修饰符会自动监听一个事件：
         v-on:update:user-channels="channels = $event"的简写
        -->
+       <!--
+         过滤器说白了就是函数，在模板中调用函数的另一种方式
+         一般用于格式化输出内容，其中不会有太多业务逻辑，一般都是对字符串的格式化处理
+         过滤器可以定义到：
+            全局： Vue.filter('过滤器名称')， 可以在任何组件中使用
+            局部： filters 选项，只能在组件内部使用
+        -->
       <home-channel
         v-model="isChannelShow"
         :user-channels.sync='channels'
@@ -105,6 +127,13 @@ export default {
       isChannelShow: false // 控制频道面板的显示状态
     }
   },
+  //  注册在全局了
+  // filters: {
+  //   relativeTime (val) {
+  //     return dayjs().from(dayjs(val))
+  //     return 123
+  //   }
+  // },
 
   async created () {
     await this.loadChannels()
