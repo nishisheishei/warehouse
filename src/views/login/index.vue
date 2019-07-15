@@ -85,7 +85,7 @@ export default {
         // 表单验证通过，发送请求 loading 加载
         this.loadLogin = true
         const data = await login(this.user)
-
+        // console.log(data)
         this.$store.commit('setUser', data)
         /**
          * 这里先简单的 跳转到首页

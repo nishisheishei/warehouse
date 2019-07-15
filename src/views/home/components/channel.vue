@@ -78,7 +78,11 @@
 </template>
 
 <script>
-import { getAllChannels, deleteUserChannel } from '@/api/channel'
+import {
+  getAllChannels,
+  deleteUserChannel,
+  updateUserChannel
+} from '@/api/channel'
 
 export default {
   name: 'HomeChannel',
@@ -152,7 +156,7 @@ export default {
       }
     },
     // 点击添加
-    handleAddChannel (item) {
+    async handleAddChannel (item) {
       // console.log(item)
       // userChannels 是 props 数据
       // props 数据有个原则：单向数据流
@@ -171,7 +175,12 @@ export default {
       const { user } = this.$store.state
       // 判断： 如果已登录，则请求添加用户频道
       if (user) {
-
+        // console.log(user)
+        await updateUserChannel([{
+          id: item.id,
+          // 序号
+          seq: channels.length - 1
+        }])
       } else {
         // 如果没有登录，则添加到本地存储
         // 没有就创建，有的直接覆盖

@@ -19,7 +19,7 @@ request.interceptors.request.use(function (config) {
   // 判断是否登录 如果登录了，则统一给接口添加用户 token
   const { user } = store.state
   if (user) {
-    config.headers.Authorization = `Beare ${user.token}`
+    config.headers.Authorization = `Bearer ${user.token}`
   }
 
   return config
