@@ -11,16 +11,25 @@ import relativeTime from './filters/relative-time'
 // 这个第三方引入即可，它会自动根据页面宽度设置页面基准字体大小
 import 'amfe-flexible'
 
-import Vant from 'vant'
 // 表单验证
 import 'vant/lib/index.css'
 
+// import Vant from 'vant'
+// import { Lazyload } from 'vant'
+// 等价于上面的两句代码写法
+import Vant, { Lazyload } from 'vant'
+
+// 注册 Vant 的图片懒加载自定义指令
+Vue.use(Lazyload)
+
 // 注册一个全局过滤器： 处理相对时间
 Vue.filter('relativeTime', relativeTime)
+
 // 语言包
 Vue.use(VeeValidate, {
   events: '' // 禁用默认事件验证
 })
+
 Validator.localize('zh_CN', zhCN)
 
 Vue.use(Vant)
