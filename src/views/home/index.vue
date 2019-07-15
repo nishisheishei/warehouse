@@ -77,7 +77,7 @@
                         局部：filters 选项，只能在组件内部使用
                     -->
                     <span>{{ item.pubdate | relativeTime }}</span>
-                    <van-icon class="close" name="close" />
+                    <van-icon class="close" name="close" @click="isMoreActionShow = true" />
                   </p>
                 </div>
               </van-cell>
@@ -120,6 +120,31 @@
         :active-index.sync="activeChannelIndex"
       />
       <!-- /频道组件 -->
+
+      <!-- 更多操作弹窗 -->
+      <van-dialog
+        v-model="isMoreActionShow"
+        :show-confirm-button="false"
+      >
+        <van-cell-group v-if="!toggleRubbish">
+          <van-cell icon="arrow-left" />
+          <van-cell title="不感兴趣" icon="location-o" />
+          <van-cell title="反馈垃圾内容" icon="close" is-link @click="toggleRubbish = true" />
+          <van-cell title="拉黑作者" icon="delete" />
+        </van-cell-group>
+        <van-cell-group v-else>
+        <van-cell icon="arrow-left" @click="toggleRubbish = false" />
+          <van-cell title="标题夸张" />
+          <van-cell title="低俗色青" />
+          <van-cell title="错别字多" />
+          <van-cell title="旧闻重复" />
+          <van-cell title="广告软文" />
+          <van-cell title="涉嫌违法范围" />
+          <van-cell title="侵权" />
+          <van-cell title="其他问题" />
+        </van-cell-group>
+      </van-dialog>
+      <!-- /更多操作弹窗 -->
     </div>
 </template>
 
@@ -142,7 +167,9 @@ export default {
       // pullRefreshLoading: false,
       // 获取用户频道列表
       channels: [],
-      isChannelShow: false // 控制频道面板的显示状态
+      isChannelShow: false, // 控制频道面板的显示状态
+      isMoreActionShow: true, // 控制更多操作弹框面板
+      toggleRubbish: false // 控制反馈垃圾
     }
   },
   //  注册在全局了
