@@ -132,7 +132,7 @@
           <van-cell icon="arrow-left" @click="isMoreActionShow = false" />
           <van-cell title="不感兴趣" icon="location-o" @click="handleDislick" />
           <van-cell title="反馈垃圾内容" icon="close" is-link @click="toggleRubbish = true" />
-          <van-cell title="拉黑作者" icon="delete" />
+          <van-cell title="拉黑作者" icon="delete" @click="handleAddBlacklist" />
         </van-cell-group>
         <van-cell-group v-else>
         <van-cell icon="arrow-left" @click="toggleRubbish = false" />
@@ -154,7 +154,7 @@
 import { getUserChannels } from '@/api/channel'
 import { getArticles, dislikesArticle } from '@/api/article'
 import HomeChannel from './components/channel'
-// import { addBlacklists } from '@/api/user'
+import { addBlacklists } from '@/api/user'
 
 export default {
   name: 'HomeIndex',
@@ -394,18 +394,16 @@ export default {
       articles.splice(delIndex, 1)
 
       this.$toast('已移除')
+    },
+
+    // 拉黑作者
+    async handleAddBlacklist () {
+      await addBlacklists(this.currentArticle.aut_id)
+      // 隐藏对话框
+      this.isMoreActionShow = false
+
+      this.$toast('拉黑作者')
     }
-
-    // 拉黑
-    // async handleAddBlacklist () {
-    //    await addBlacklists(this.currentArticle.aut_id)
-
-    //    // 隐藏对话框
-    //    this.isMoreActionShow = false
-
-    //    this.$toast('已拉黑作者');
-
-    // }
   }
 }
 
