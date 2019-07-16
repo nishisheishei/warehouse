@@ -68,16 +68,25 @@ export default {
     }
   },
 
+  //   created () {
+  //     console.log('created')
+  //   },
+
   // 组件缓存的情况下：页面显示出来调用它
   activated () {
-    this.loading = true
-    this.onLoad()
+    // this.loading = true
+    // this.onLoad()
   },
 
   // 组件缓存的情况下：页面隐藏调用它
   deactivated () {
-    this.artiles = []
-    this.page = 1
+    // this.artiles = []
+    // this.page = 1
+
+    // 如果觉得那样麻烦的话，也可以缓存失活的时候，直接手动销毁这个组件
+    // 下次进来则会重新创建这个组件
+    // 说白了就是手动禁用了当前组件缓存
+    this.$destroy()
   },
 
   async created () {
