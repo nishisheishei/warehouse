@@ -2,11 +2,14 @@
 <!-- <p>搜索</p> -->
     <div>
         <!-- 搜索 -->
-        <van-search
-            placeholder="请输入搜索关键词"
-            v-model="searchText"
-            show-action
-        />
+        <form action="/">
+            <van-search
+                placeholder="请输入搜索关键词"
+                v-model="searchText"
+                show-action
+                @search="handleSearch(searchText)"
+            />
+        </form>
         <!-- /搜索 -->
 
         <!-- 联想建议 -->
@@ -15,7 +18,11 @@
                 v-for="item in suggestions"
                 :key="item"
                 :title="item"
-                icon="location-o" />
+                @click="handleSearch(item)"
+                icon="location-o"
+            >
+                <div slot="title" v-html="hightlight(item, searchText)"></div>
+            </van-cell>
         </van-cell-group>
         <!-- /联想建议 -->
 
@@ -64,6 +71,21 @@ export default {
       // console.log(data)
       this.suggestions = data.options
     }, 500)
+  },
+
+  methods: {
+    hightlight (text, keyword) {
+      return text.toLowerCase().split(keyword).join(`<span style="color: red;">${keyword}</span>`)
+    },
+    handleSearch (q) {
+      console.log(q)
+      this.$router.push({
+        name: 'search-result',
+        params: {
+          q
+        }
+      })
+    }
   }
 }
 </script>
