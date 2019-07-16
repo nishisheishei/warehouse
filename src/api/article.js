@@ -32,3 +32,23 @@ export const dislikesArticle = articleId => {
     }
   })
 }
+
+// 举报文章
+export const reportArticle = ({
+  articleId,
+  type,
+  remark
+}) => {
+  return request({
+    method: 'POST',
+    url: '/app/v1_0/article/reports',
+    data: {
+      // 举报文章的id
+      target: articleId,
+      // 举报类型： 0-其他问题，1-标题夸张，2-低俗色情，3-错别字多，4-旧闻重复，5-广告软文，6-内容不实，7-涉嫌违法犯罪，8-侵权'
+      type: Number.parseInt(type),
+      // 其他问题 的附加说明
+      remark
+    }
+  })
+}

@@ -127,6 +127,7 @@
         v-model="isMoreActionShow"
         :show-confirm-button="false"
         closeOnClickOverlay
+        :before-close="handleMoreActionClose"
       >
         <van-cell-group v-if="!toggleRubbish">
           <van-cell icon="arrow-left" @click="isMoreActionShow = false" />
@@ -136,14 +137,12 @@
         </van-cell-group>
         <van-cell-group v-else>
         <van-cell icon="arrow-left" @click="toggleRubbish = false" />
-          <van-cell title="标题夸张" />
-          <van-cell title="低俗色青" />
-          <van-cell title="错别字多" />
-          <van-cell title="旧闻重复" />
-          <van-cell title="广告软文" />
-          <van-cell title="涉嫌违法范围" />
-          <van-cell title="侵权" />
-          <van-cell title="其他问题" />
+          <van-cell
+            v-for="item in repotTypes"
+            :key="item.value"
+            :title="item.label"
+            @click="handleReportArticle(item.value)"
+          />
         </van-cell-group>
       </van-dialog>
       <!-- /更多操作弹窗 -->
@@ -152,7 +151,7 @@
 
 <script>
 import { getUserChannels } from '@/api/channel'
-import { getArticles, dislikesArticle } from '@/api/article'
+import { getArticles, dislikesArticle, reportArticle } from '@/api/article'
 import HomeChannel from './components/channel'
 import { addBlacklists } from '@/api/user'
 
@@ -173,7 +172,19 @@ export default {
       isChannelShow: false, // 控制频道面板的显示状态
       isMoreActionShow: false, // 控制更多操作弹框面板
       toggleRubbish: false, // 控制反馈垃圾
-      currentArticle: null // 存储当前操作更多的文章
+      currentArticle: null, // 存储当前操作更多的文章
+      // 0-其他问题，1-标题夸张，2-低俗色情，3-错别字多，4-旧闻重复，5-广告软文，6-内容不实，7-涉嫌违法犯罪，8-侵权'
+      repotTypes: [
+        { value: '1', label: '标题夸张' },
+        { value: '2', label: '低俗色情' },
+        { value: '3', label: '错别字多' },
+        { value: '4', label: '旧闻重复' },
+        { value: '5', label: '广告软文' },
+        { value: '6', label: '内容不实' },
+        { value: '7', label: '涉嫌违法犯罪' },
+        { value: '8', label: '侵权' },
+        { value: '0', label: '其他问题' }
+      ]
     }
   },
   //  注册在全局了
@@ -403,6 +414,38 @@ export default {
       this.isMoreActionShow = false
 
       this.$toast('拉黑作者')
+    },
+
+    // 反馈垃圾内容
+    async handleReportArticle (type) {
+      // console.log(type)
+      try {
+        await reportArticle({
+          articleId: this.currentArticle.art_id.toString(),
+          type,
+          remark: ''
+        })
+        this.isMoreActionShow = false
+        this.$toast('举报成功')
+      } catch (err) {
+        // console.log('反馈失败')
+        if (err.response.status === 409) {
+          this.$toast('该文章已被举报！')
+        }
+      }
+    },
+
+    /**
+     * 该函数会在关闭对话的时候被调用
+     * 我们可以在这里加入一些关闭之前的逻辑
+     * 如果设置了这个函数，那么最后必须手动的 done 才会关闭对话框
+     */
+    handleMoreActionClose (action, done) {
+      // console.log(1)
+      done()
+      window.setTimeout(() => {
+        this.toggleRubbish = false
+      }, 500)
     }
   }
 }

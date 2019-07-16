@@ -205,7 +205,7 @@ export default {
 
       //  判断 如果用户已登录，则请求删除
       if (user) {
-        console.log(item.id)
+        // console.log(item.id)
         await deleteUserChannel(item.id)
         return
       }
