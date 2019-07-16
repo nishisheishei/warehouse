@@ -35,6 +35,7 @@
 
 <script>
 import { getSuggestion } from '@/api/search'
+import { debounce } from 'lodash'
 
 export default {
   name: 'SearchIndex',
@@ -50,7 +51,7 @@ export default {
   //  监视用的
   watch: {
     //   有两个参数  newVue 和 oldVal  分别是  改变后的状态  改变前的状态
-    async searchText (newVue) {
+    searchText: debounce(async function (newVue) {
       newVue = newVue.trim() // 去除首尾空格
 
       //   判断  当输入内容为空的时候 则什么都不管
@@ -62,7 +63,7 @@ export default {
       const data = await getSuggestion(newVue)
       // console.log(data)
       this.suggestions = data.options
-    }
+    }, 500)
   }
 }
 </script>
