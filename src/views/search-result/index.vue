@@ -68,6 +68,18 @@ export default {
     }
   },
 
+  // 组件缓存的情况下：页面显示出来调用它
+  activated () {
+    this.loading = true
+    this.onLoad()
+  },
+
+  // 组件缓存的情况下：页面隐藏调用它
+  deactivated () {
+    this.artiles = []
+    this.page = 1
+  },
+
   async created () {
     const data = await getSearch({
       q: this.$route.params.q,
